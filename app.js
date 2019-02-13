@@ -1,7 +1,7 @@
-let pixel = 3;
+let pixel = 2;
 
-let width = 200;
-let height = 120;
+let width = 300;
+let height = 300;
 
 let income_min = 1000;
 let income_max = 1000000;
@@ -38,9 +38,9 @@ function drawPixel(x, y) {
     let b = 0;
 
     if (diff < 0) {
-        r = 155 + diff * 100 / -10000;
+        g = 155 + diff * 100 / -10000;
     } else {
-        g = 155 + diff * 100 / 10000;
+        r = 155 + diff * 100 / 10000;
     }
 
     let c = color(r, g, b);
