@@ -6,6 +6,9 @@ let height = 120;
 let income_min = 1000;
 let income_max = 1000000;
 
+let diff_low = -100;
+let diff_high = 100;
+
 function setup() {
     createCanvas(pixel * width, pixel * height);
 
@@ -30,7 +33,17 @@ function drawPixel(x, y) {
 
     let diff = married_tax - (tax1 + tax2);
 
-    let c = color(255, 0, 0);
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    if (diff < 0) {
+        r = 155 + diff * 100 / -10000;
+    } else {
+        g = 155 + diff * 100 / 10000;
+    }
+
+    let c = color(r, g, b);
     stroke(c);
     fill(c);
 
@@ -58,8 +71,8 @@ function getIncomeTax(income, brackets) {
         if (leftover + previous_bracket <= bracket) {
             return tax + leftover * rate;
         }
-        tax += bracket * rate;
-        leftover -= bracket;
+        tax = tax + bracket * rate;
+        leftover = leftover - bracket;
         previous_bracket = bracket;
     }
     return tax + leftover * rates[rates.length - 1];
