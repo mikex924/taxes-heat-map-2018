@@ -10,8 +10,7 @@ let rates = [0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37];
 let single_brackets = [9525, 38700, 82500, 157500, 200000, 500000];
 let married_brackets = [19050, 77400, 165000, 315000, 400000, 600000];
 
-let income_data = [];
-let bonus_data = [];
+let data_mat = [];
 
 function setup() {
     createCanvas(pixel * width, pixel * height);
@@ -20,10 +19,6 @@ function setup() {
     married_brackets = adjust(married_brackets);
 
     for (let x = 0; x < width; x++) {
-
-        income_data[x] = [];
-        bonus_data[x] = [];
-
         for (let y = 0; y < height; y++) {
             drawPixel(x, y);
         }
@@ -55,6 +50,15 @@ function drawPixel(x, y) {
     let bonus = (tax1 + tax2) - married_tax;
     bonus = Math.round(bonus);
 
+    if (!data_mat[x]) {
+        data_mat[x] = [];
+    }
+    data_mat[x][y] = {
+        income: Math.round(joint_income),
+        bonus: bonus,
+        split: Math.round(split)
+    };
+
     let r = 0;
     let g = 0;
     let b = 0;
@@ -70,9 +74,6 @@ function drawPixel(x, y) {
     fill(c);
 
     rect(x * pixel, y * pixel, pixel, pixel);
-
-    income_data[x][y] = Math.round(joint_income);
-    bonus_data[x][y] = bonus;
 }
 
 function getSingleTax(income) {
@@ -97,20 +98,28 @@ function getIncomeTax(income, brackets) {
 }
 
 function draw() {
+    let size = 15;
+
     stroke(255);
     fill(255);
-    rect(0, 0, 45 * pixel, 12 * pixel);
+    rect(0, 0, size * 10, size * 3.5);
 
     fill(0);
-    textSize(5 * pixel);
+    textSize(size);
+    textFont('monospace');
 
     let x = Math.round(mouseX / pixel);
     let y = Math.round(mouseY / pixel);
 
-    if (income_data[x] && income_data[x][y]) {
-        text('income: $' + income_data[x][y], pixel, 5 * pixel);
-    }
-    if (bonus_data[x] && bonus_data[x][y]) {
-        text('bonus: $' + bonus_data[x][y], pixel, 10 * pixel);
+    if (data_mat[x] && data_mat[x][y]) {
+        let data = data_mat[x][y];
+        let income = data['income'];
+        let bonus = data['bonus'];
+        let split = data['split'];
+
+        let left_margin = size * 0.2;
+        text(`income: $${income}`, left_margin, size);
+        text(` bonus: $${bonus}`, left_margin, size * 2);
+        text(` split: ${split}-${100 - split}`, left_margin, size * 3);
     }
 }
