@@ -1,25 +1,47 @@
-let pixel = 2;
+//TODO add standard deductions
+//TODO step ladder the color gradient
+
+let pixel = 3;
 
 let width = 300;
-let height = 300;
+let height = 150;
 
 let income_min = 1000;
 let income_max = 1000000;
 
-let diff_low = -100;
-let diff_high = 100;
+let rates = [0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37];
+let single_brackets = [9525, 38700, 82500, 157500, 200000, 500000];
+let married_brackets = [19050, 77400, 165000, 315000, 400000, 600000];
 
 function setup() {
     createCanvas(pixel * width, pixel * height);
 
-    background(220);
+    single_brackets = adjust(single_brackets);
+    married_brackets = adjust(married_brackets);
 
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
             drawPixel(x, y);
         }
     }
+    console.log(max_bonus);
+    console.log(min_bonus);
 }
+
+function adjust(brackets) {
+    adjusted = []
+    for (let i = 0; i < brackets.length; i++) {
+        if (i === 0) {
+            adjusted.push(brackets[i]);
+        } else {
+            adjusted.push(brackets[i] - brackets[i - 1]);
+        }
+    }
+    return adjusted;
+}
+
+let max_bonus = 0;
+let min_bonus = 0;
 
 function drawPixel(x, y) {
     let joint_income = income_min + (income_max - income_min) * x / (width - 1);
@@ -31,16 +53,16 @@ function drawPixel(x, y) {
     let tax1 = getSingleTax(income1);
     let tax2 = getSingleTax(income2);
 
-    let diff = married_tax - (tax1 + tax2);
+    let bonus = (tax1 + tax2) - married_tax;
 
     let r = 0;
     let g = 0;
     let b = 0;
 
-    if (diff < 0) {
-        g = 155 + diff * 100 / -10000;
+    if (bonus > 0) {
+        g = 150 + bonus / 500;
     } else {
-        r = 155 + diff * 100 / 10000;
+        r = 150 - bonus / 50;
     }
 
     let c = color(r, g, b);
@@ -49,10 +71,6 @@ function drawPixel(x, y) {
 
     rect(x * pixel, y * pixel, pixel, pixel);
 }
-
-let rates = [0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37];
-let single_brackets = [9525, 38700, 82500, 157500, 200000, 500000];
-let married_brackets = [19050, 77400, 165000, 315000, 400000, 600000];
 
 function getSingleTax(income) {
     return getIncomeTax(income, single_brackets);
@@ -64,18 +82,15 @@ function getMarriedTax(income) {
 
 function getIncomeTax(income, brackets) {
     let tax = 0;
-    let leftover = income;
-    let previous_bracket = 0;
     for (const [i, bracket] of brackets.entries()) {
         let rate = rates[i];
-        if (leftover + previous_bracket <= bracket) {
-            return tax + leftover * rate;
+        if (income <= bracket) {
+            return tax + income * rate;
         }
-        tax = tax + bracket * rate;
-        leftover = leftover - bracket;
-        previous_bracket = bracket;
+        tax += bracket * rate;
+        income -= bracket;
     }
-    return tax + leftover * rates[rates.length - 1];
+    return tax + income * rates[rates.length - 1];
 }
 
 function draw() {
