@@ -1,5 +1,4 @@
 //TODO add standard deductions
-//TODO step ladder the color gradient
 
 let pixel = 3;
 
@@ -24,8 +23,6 @@ function setup() {
             drawPixel(x, y);
         }
     }
-    console.log(max_bonus);
-    console.log(min_bonus);
 }
 
 function adjust(brackets) {
@@ -40,9 +37,6 @@ function adjust(brackets) {
     return adjusted;
 }
 
-let max_bonus = 0;
-let min_bonus = 0;
-
 function drawPixel(x, y) {
     let joint_income = income_min + (income_max - income_min) * x / (width - 1);
     let married_tax = getMarriedTax(joint_income);
@@ -54,15 +48,16 @@ function drawPixel(x, y) {
     let tax2 = getSingleTax(income2);
 
     let bonus = (tax1 + tax2) - married_tax;
+    bonus = Math.round(bonus);
 
     let r = 0;
     let g = 0;
     let b = 0;
 
     if (bonus > 0) {
-        g = 150 + bonus / 500;
-    } else {
-        r = 150 - bonus / 50;
+        g = 100 + Math.ceil(bonus / 3000) * 20;
+    } else if (bonus < 0) {
+        r = 100 + Math.ceil(bonus / -1000) * 20;
     }
 
     let c = color(r, g, b);
