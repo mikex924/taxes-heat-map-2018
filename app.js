@@ -1,5 +1,3 @@
-//TODO add standard deductions
-
 let pixel = 3;
 
 let width = 300;
@@ -12,6 +10,9 @@ let rates = [0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37];
 let single_brackets = [9525, 38700, 82500, 157500, 200000, 500000];
 let married_brackets = [19050, 77400, 165000, 315000, 400000, 600000];
 
+let income_data = [];
+let bonus_data = [];
+
 function setup() {
     createCanvas(pixel * width, pixel * height);
 
@@ -19,6 +20,10 @@ function setup() {
     married_brackets = adjust(married_brackets);
 
     for (let x = 0; x < width; x++) {
+
+        income_data[x] = [];
+        bonus_data[x] = [];
+
         for (let y = 0; y < height; y++) {
             drawPixel(x, y);
         }
@@ -65,6 +70,9 @@ function drawPixel(x, y) {
     fill(c);
 
     rect(x * pixel, y * pixel, pixel, pixel);
+
+    income_data[x][y] = Math.round(joint_income);
+    bonus_data[x][y] = bonus;
 }
 
 function getSingleTax(income) {
@@ -89,4 +97,20 @@ function getIncomeTax(income, brackets) {
 }
 
 function draw() {
+    stroke(255);
+    fill(255);
+    rect(0, 0, 45 * pixel, 12 * pixel);
+
+    fill(0);
+    textSize(5 * pixel);
+
+    let x = Math.round(mouseX / pixel);
+    let y = Math.round(mouseY / pixel);
+
+    if (income_data[x] && income_data[x][y]) {
+        text('income: $' + income_data[x][y], pixel, 5 * pixel);
+    }
+    if (bonus_data[x] && bonus_data[x][y]) {
+        text('bonus: $' + bonus_data[x][y], pixel, 10 * pixel);
+    }
 }
