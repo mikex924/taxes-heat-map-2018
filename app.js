@@ -98,11 +98,11 @@ function getIncomeTax(income, brackets) {
 }
 
 function draw() {
-    let size = 15;
+    let size = 13;
 
     stroke(255);
     fill(255);
-    rect(0, 0, size * 10, size * 3.5);
+    rect(0, 0, size * 12, size * 3.5);
 
     fill(0);
     textSize(size);
@@ -113,13 +113,13 @@ function draw() {
 
     if (data_mat[x] && data_mat[x][y]) {
         let data = data_mat[x][y];
-        let income = data['income'];
-        let bonus = data['bonus'];
+        let income = nfc(data['income']);
+        let bonus = nfc(data['bonus']);
         let split = data['split'];
 
         let left_margin = size * 0.2;
         text(`income: $${income}`, left_margin, size);
         text(` bonus: $${bonus}`, left_margin, size * 2);
-        text(` split: ${split}-${100 - split}`, left_margin, size * 3);
+        text(` split: ${split} - ${100 - split}`, left_margin, size * 3);
     }
 }
